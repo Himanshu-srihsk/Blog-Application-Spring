@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.example.SpringSecurityJWT.config.JwtAuthFilter;
 import com.example.blog.Security.JwtAuthenicationEntryPoint;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
+@EnableWebMvc
 public class SecurityConfig{
 //	@Autowired
 //	private CustomUserDetailsService customUserDetailsService;
@@ -38,6 +40,9 @@ public class SecurityConfig{
 	
 	private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
+    
+    public static final String[] PUBLIC_URLS = {"/auth/**", "/api-docs", "/swagger-ui/**"};
+
 	
 	
 	@Bean
@@ -47,7 +52,8 @@ public class SecurityConfig{
         		auth -> 
 //        		auth.requestMatchers("/home/**").authenticated()
         		auth
-        		.requestMatchers("/auth/**").permitAll()
+        		.requestMatchers(PUBLIC_URLS).permitAll()
+        		.requestMatchers("/swagger-ui.html").permitAll()
         		.requestMatchers(HttpMethod.GET).permitAll()
         		.anyRequest().authenticated()
         		)

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,14 @@ import com.example.blog.payloads.PostResponse;
 import com.example.blog.service.FileService;
 import com.example.blog.service.PostService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/")
+@Tag(name = "PostController" , description = "To perform CRUD operations related to POST posted by USER")
 public class PostController {
 	@Autowired
 	PostService postService;
@@ -42,6 +46,10 @@ public class PostController {
 	@Value("${project.image}")
 	private String path;
 	
+	@Operation(
+			summary = "POST operation for creating post by logined User",
+			description = "It is used to create post for a particular Category by user logined"
+			)
 	@PostMapping("/user/{userId}/category/{categoryId}/posts")
 	public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto,
 			@PathVariable Integer userId,@PathVariable Integer categoryId){
@@ -49,11 +57,21 @@ public class PostController {
 		return new ResponseEntity<PostDto>(createpostDto, HttpStatus.CREATED);
 	}
 	
+	@Operation(
+			summary = "GET operation for all post by logined User",
+			description = "It is used to get all the post by user logined"
+			)
+	
 	@GetMapping("/user/{userId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByUser(@PathVariable Integer userId){
 		List<PostDto> posts = this.postService.getPostsByUser(userId);
 		return new ResponseEntity<List<PostDto>>(posts,HttpStatus.OK);
     }
+	
+	@Operation(
+			summary = "GET operation for particular post by logined User",
+			description = "It is used to particular post by user logined"
+			)
 	
 	@GetMapping("/category/{categoryId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Integer categoryId){
@@ -69,6 +87,11 @@ public class PostController {
 //		List<PostDto> allposts = this.postService.getAllPost(pageNumber,pageSize);
 //		return new ResponseEntity<List<PostDto>>(allposts,HttpStatus.OK);
 //	}
+	
+	@Operation(
+			summary = "GET all post  with pagination by logined User",
+			description = "It is  all post  with pagination  by user logined"
+			)
 	
 	@GetMapping("/posts")
 	public ResponseEntity<PostResponse> getAllPosts(
@@ -86,6 +109,24 @@ public class PostController {
 		PostDto postDto = this.postService.getPostById(postId);
 		return new ResponseEntity<PostDto>(postDto,HttpStatus.OK);
 	}
+	@Operation(
+			summary = "Delete Post accessible only to Admin user",
+			description = "Only admin can do this operation",
+			responses = {
+					@io.swagger.v3.oas.annotations.responses.ApiResponse(
+					 description="Success",
+					 responseCode = "200"
+					),
+					@io.swagger.v3.oas.annotations.responses.ApiResponse(
+							 description="Data not found",
+							 responseCode = "404"
+							),
+					@io.swagger.v3.oas.annotations.responses.ApiResponse(
+							 description="Unauthorised User",
+							 responseCode = "401"
+							)
+			}
+			)
 	@DeleteMapping("/posts/{postId}")
 	public ApiResponse deletePost(@PathVariable Integer postId) {
 		this.postService.deletePost(postId);

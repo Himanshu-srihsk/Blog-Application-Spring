@@ -3,6 +3,7 @@ package com.example.blog.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import com.example.blog.payloads.ApiResponse;
 import com.example.blog.payloads.CategoryDto;
 import com.example.blog.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 
@@ -38,6 +40,24 @@ public class CategoryController {
 		CategoryDto createCategory = this.categoryService.updateCategory(categoryDto,catId);
 		return new ResponseEntity<CategoryDto>(createCategory,HttpStatus.OK);
 	}
+	@Operation(
+			summary = "Delete category accessible only to Admin user",
+			description = "Only admin can do this operation",
+			responses = {
+					@io.swagger.v3.oas.annotations.responses.ApiResponse(
+					 description="Success",
+					 responseCode = "200"
+					),
+					@io.swagger.v3.oas.annotations.responses.ApiResponse(
+							 description="Data not found",
+							 responseCode = "404"
+							),
+					@io.swagger.v3.oas.annotations.responses.ApiResponse(
+							 description="Unauthorised User",
+							 responseCode = "401"
+							)
+			}
+			)
 	
 	@DeleteMapping("/{catId}")
 	public ResponseEntity<?> deleteUser(@PathVariable("catId") Integer catId){
