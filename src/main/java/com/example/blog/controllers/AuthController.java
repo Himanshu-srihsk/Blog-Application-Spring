@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.SpringSecurityJWT.User.auth.AuthenticationResponse;
 import com.example.blog.Security.JwtHelper;
 import com.example.blog.entities.JwtRequest;
 import com.example.blog.entities.JwtResponse;
